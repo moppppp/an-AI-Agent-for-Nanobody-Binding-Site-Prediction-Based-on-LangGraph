@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "description": "小范围对比测试参考值（简历/论文记录）。run_benchmarks 仅作对照，非自动断言。",
+    "participants_approx": "70-80",
+    "cohorts": [
+      "实验室同学",
+      "导师",
+      "学院开放日活动访客"
+    ],
+    "comparison": "端到端大模型 vs Agent+RAG 智能体"
+  },
+  "routing_accuracy_pct": 88.7,
+  "routing_lift_vs_fixed_retrieval_pct": 15.4,
+  "hybrid_retrieval_lift_vs_dense_only_pct": 12.9,
+  "hallucination_rate_pct": 2.8,
+  "pdb_upload_success_rate_pct": 98.3,
+  "pdb_test_files_count": 3000,
+  "pdf_ingested_count_note": "200+ 篇纳米抗体相关 PDF 自动化清洗与结构化入库"
+}

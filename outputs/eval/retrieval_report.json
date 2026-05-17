@@ -1,0 +1,8 @@
+{
+  "queries": 8,
+  "hybrid_hit_at_1": 0.75,
+  "dense_hit_at_1": 0.875,
+  "hybrid_hit_at_3": 1.0,
+  "dense_hit_at_3": 0.875,
+  "lift_hit_at_1_pct": -14.29
+}

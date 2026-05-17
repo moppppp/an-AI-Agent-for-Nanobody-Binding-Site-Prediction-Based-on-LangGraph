@@ -1,0 +1,10 @@
+{"query": "什么是纳米抗体", "expected": "kb", "note": "定义"}
+{"query": "纳米抗体与单克隆抗体有什么区别", "expected": "kb", "note": "对比"}
+{"query": "请预测该序列的结合位点 EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYAMSWVRQAPGKGLEWVSAISGSGGSTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAK", "expected": "nanokgat"}
+{"query": "用 PyMOL 可视化纳米抗体三维结构", "expected": "nanokgat"}
+{"query": "今天上海天气怎么样", "expected": "reject"}
+{"query": "比特币最新价格", "expected": "reject"}
+{"query": "图神经网络在抗体结合位点预测中的应用", "expected": "kb"}
+{"query": "AntiBERTy 在纳米抗体研究中的作用", "expected": "kb"}
+{"query": "帮我写一封请假邮件", "expected": "reject"}
+{"query": "结合位点预测常用数据集有哪些", "expected": "kb"}

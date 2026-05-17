@@ -1,0 +1,31 @@
+{
+  "total_ids": 20,
+  "success": 20,
+  "failed": 0,
+  "success_rate_pct": 100.0,
+  "out_dir": "data\\pdb_test_20",
+  "elapsed_seconds": 32.3,
+  "pdb_ids": [
+    "1a14",
+    "1a3l",
+    "1acy",
+    "1adq",
+    "1afv",
+    "1ahw",
+    "1ar1",
+    "1bgx",
+    "1bj1",
+    "1bql",
+    "1bvk",
+    "1bzq",
+    "1c08",
+    "1c12",
+    "1c5c",
+    "1cbv",
+    "1cfn",
+    "1cfs",
+    "1cft",
+    "1ct8"
+  ],
+  "sample_errors": []
+}

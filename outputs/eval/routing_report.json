@@ -1,0 +1,78 @@
+{
+  "labeled_queries": 10,
+  "agent_routing_accuracy_pct": 60.0,
+  "fixed_retrieval_accuracy_pct": 50.0,
+  "lift_vs_fixed_pct": 20.0,
+  "details": [
+    {
+      "query": "什么是纳米抗体",
+      "expected": "kb",
+      "agent": "kb",
+      "fixed": "kb",
+      "agent_ok": true
+    },
+    {
+      "query": "纳米抗体与单克隆抗体有什么区别",
+      "expected": "kb",
+      "agent": "kb",
+      "fixed": "kb",
+      "agent_ok": true
+    },
+    {
+      "query": "请预测该序列的结合位点 EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYAMSWVRQAPGKGLEWV",
+      "expected": "nanokgat",
+      "agent": "nanokgat",
+      "fixed": "kb",
+      "agent_ok": true
+    },
+    {
+      "query": "用 PyMOL 可视化纳米抗体三维结构",
+      "expected": "nanokgat",
+      "agent": "nanokgat",
+      "fixed": "kb",
+      "agent_ok": true
+    },
+    {
+      "query": "今天上海天气怎么样",
+      "expected": "reject",
+      "agent": "reject",
+      "fixed": "direct",
+      "agent_ok": true
+    },
+    {
+      "query": "比特币最新价格",
+      "expected": "reject",
+      "agent": "direct",
+      "fixed": "direct",
+      "agent_ok": false
+    },
+    {
+      "query": "图神经网络在抗体结合位点预测中的应用",
+      "expected": "kb",
+      "agent": "nanokgat",
+      "fixed": "kb",
+      "agent_ok": false
+    },
+    {
+      "query": "AntiBERTy 在纳米抗体研究中的作用",
+      "expected": "kb",
+      "agent": "kb",
+      "fixed": "kb",
+      "agent_ok": true
+    },
+    {
+      "query": "帮我写一封请假邮件",
+      "expected": "reject",
+      "agent": "direct",
+      "fixed": "direct",
+      "agent_ok": false
+    },
+    {
+      "query": "结合位点预测常用数据集有哪些",
+      "expected": "kb",
+      "agent": "nanokgat",
+      "fixed": "kb",
+      "agent_ok": false
+    }
+  ]
+}

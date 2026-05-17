@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>纳米抗体智能体</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <span class="brand-icon">Nb</span>
+          <span class="brand-text">纳米抗体智能体</span>
+        </div>
+        <button type="button" id="newChatBtn" class="btn btn-primary btn-block" title="新建对话（保留历史，可切换回来）">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          新对话
+        </button>
+      </div>
+      <nav class="sidebar-chats" aria-label="对话历史">
+        <p class="nav-label">历史对话</p>
+        <div id="chatHistoryList" class="chat-history-list"></div>
+      </nav>
+      <nav class="sidebar-nav" aria-label="示例问题">
+        <p class="nav-label">试试这些问题</p>
+        <button type="button" class="nav-item" data-q="什么是纳米抗体？">什么是纳米抗体？</button>
+        <button type="button" class="nav-item" data-q="纳米抗体与传统抗体相比有什么优势？">与传统抗体对比</button>
+        <button type="button" class="nav-item" data-q="请预测该纳米抗体的结合位点">结合位点预测</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="statusBadge" class="status-pill status-loading">
+          <span class="status-dot"></span>
+          <span id="statusText">正在加载模型…</span>
+        </div>
+        <p class="sidebar-note">知识库 RAG · NanoKGAT · LangGraph</p>
+      </div>
+    </aside>
+
+    <main class="chat-main">
+      <header class="chat-header">
+        <h1>对话</h1>
+        <button type="button" id="toggleInsight" class="btn btn-ghost" aria-expanded="false">推理详情</button>
+      </header>
+
+      <div class="chat-body">
+        <div id="chatScroll" class="chat-scroll">
+          <div id="welcome" class="welcome-card">
+            <div class="welcome-icon">🧬</div>
+            <h2>开始一段对话</h2>
+            <p>我可以基于知识库回答纳米抗体相关问题，或调用 NanoKGAT 预测结合位点。</p>
+            <div class="welcome-chips">
+              <button type="button" class="chip" data-q="什么是纳米抗体？">纳米抗体简介</button>
+              <button type="button" class="chip" data-q="图神经网络在抗体结合位点预测中的应用">GNN 与结合位点</button>
+              <button type="button" class="chip" data-q="请预测该纳米抗体的结合位点">预测结合位点</button>
+            </div>
+          </div>
+          <div id="messageList" class="message-list" role="log" aria-live="polite"></div>
+        </div>
+        <button type="button" id="scrollBottomBtn" class="scroll-bottom hidden" aria-label="回到底部">↓</button>
+      </div>
+
+      <footer class="composer-wrap">
+        <form id="chatForm" class="composer">
+          <div class="composer-inner">
+            <textarea
+              id="queryInput"
+              rows="1"
+              placeholder="输入消息… Enter 发送，Shift+Enter 换行"
+              maxlength="8000"
+              autocomplete="off"
+            ></textarea>
+            <button type="submit" id="sendBtn" class="send-btn" disabled aria-label="发送">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4 20.8 12 3.4 3.6l-.8 7.2 9.2 1.2-9.2 1.2.8 7.2z"/></svg>
+            </button>
+          </div>
+          <div class="composer-tools">
+            <label class="pdb-upload-label">
+              <input type="file" id="pdbFile" accept=".pdb" hidden />
+              上传 PDB
+            </label>
+            <span id="pdbStatus" class="pdb-status"></span>
+          </div>
+          <p class="composer-hint">支持多轮记忆 · 混合检索 · PDB 上传预测 · Redis 重复问缓存</p>
+        </form>
+      </footer>
+    </main>
+
+    <aside id="insightPanel" class="insight-panel" aria-label="推理详情">
+      <header class="insight-header">
+        <h2>推理详情</h2>
+        <button type="button" id="closeInsight" class="btn btn-ghost btn-sm" aria-label="关闭">×</button>
+      </header>
+      <div class="insight-body">
+        <p id="insightEmpty" class="insight-empty">发送消息后，将显示本次请求的路由与检索信息。</p>
+        <div id="insightContent" class="insight-content hidden">
+          <div class="insight-cards">
+            <div class="insight-card">
+              <span class="insight-label">路由</span>
+              <span id="metaRoute" class="insight-value">—</span>
+            </div>
+            <div class="insight-card">
+              <span class="insight-label">意图</span>
+              <span id="metaIntent" class="insight-value">—</span>
+            </div>
+            <div class="insight-card">
+              <span class="insight-label">相关度</span>
+              <div class="relevance-bar-wrap">
+                <div id="relevanceBar" class="relevance-bar" style="width:0%"></div>
+              </div>
+              <span id="metaRelevance" class="insight-value mono">0.000</span>
+            </div>
+            <div class="insight-card">
+              <span class="insight-label">对话记忆</span>
+              <span id="metaMemory" class="insight-value">—</span>
+            </div>
+          </div>
+          <section id="memoryBlock" class="insight-section hidden">
+            <h3>对话记忆</h3>
+            <p id="memoryMeta" class="memory-meta">—</p>
+            <h4 class="memory-subhead">历史摘要</h4>
+            <pre id="memorySummary" class="code-block memory-text">（暂无）</pre>
+            <h4 class="memory-subhead">送入模型的上下文预览</h4>
+            <pre id="memoryContext" class="code-block memory-text">（暂无）</pre>
+          </section>
+          <section id="citationBlock" class="insight-section hidden">
+            <h3>引用来源</h3>
+            <div id="citationList" class="snippet-list"></div>
+          </section>
+          <section id="snippetBlock" class="insight-section hidden">
+            <h3>检索片段</h3>
+            <div id="snippetList" class="snippet-list"></div>
+          </section>
+          <section id="predictionBlock" class="insight-section hidden">
+            <h3>预测结果</h3>
+            <pre id="predictionJson" class="code-block"></pre>
+          </section>
+          <a id="pymolLink" class="pymol-link hidden" href="#" target="_blank" rel="noopener noreferrer">在 PyMOL 中查看结构 →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div id="overlay" class="overlay hidden" aria-hidden="true"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

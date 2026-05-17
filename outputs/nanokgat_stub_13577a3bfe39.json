@@ -1,0 +1,13 @@
+{
+  "session_id": "13577a3bfe39",
+  "residues": [
+    "H32",
+    "H50",
+    "H100",
+    "L26",
+    "L93"
+  ],
+  "confidence": 0.82,
+  "structure_path": "C:\\Users\\HP\\nanobody_agent\\outputs\\nanokgat_stub_13577a3bfe39.json",
+  "notes": "stub prediction; replace with NanoKGAT output"
+}

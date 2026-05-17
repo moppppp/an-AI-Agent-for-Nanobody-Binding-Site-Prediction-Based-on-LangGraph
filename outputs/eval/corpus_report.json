@@ -1,0 +1,6 @@
+{
+  "pdf_files_in_pdfs_dir": 2,
+  "ingested_markdown": 2,
+  "ingested_ocr_markdown": 2,
+  "note": "200+ nanobody PDFs: compare pdf count vs ingested; run scripts/batch_ingest_pdfs.py"
+}

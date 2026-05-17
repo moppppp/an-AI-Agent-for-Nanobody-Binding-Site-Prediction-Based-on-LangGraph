@@ -1,0 +1,66 @@
+{
+  "routing": {
+    "labeled_queries": 10,
+    "agent_routing_accuracy_pct": 60.0,
+    "fixed_retrieval_accuracy_pct": 50.0,
+    "lift_vs_fixed_pct": 20.0
+  },
+  "retrieval": {
+    "queries": 8,
+    "hybrid_hit_at_1": 0.75,
+    "dense_hit_at_1": 0.875,
+    "hybrid_hit_at_3": 1.0,
+    "dense_hit_at_3": 0.875,
+    "lift_hit_at_1_pct": -14.29
+  },
+  "hallucination": {
+    "checks": 5,
+    "hallucination_proxy_rate_pct": 40.0,
+    "invoke_llm": false
+  },
+  "pdb": {
+    "total_files": 20,
+    "success_count": 20,
+    "success_rate_pct": 100.0,
+    "sample_errors": []
+  },
+  "corpus": {
+    "pdf_files_in_pdfs_dir": 2,
+    "ingested_markdown": 2,
+    "ingested_ocr_markdown": 2,
+    "note": "200+ nanobody PDFs: compare pdf count vs ingested; run scripts/batch_ingest_pdfs.py"
+  },
+  "elapsed_seconds": 89.3,
+  "reference_comparison": {
+    "routing_accuracy_pct": {
+      "measured": 60.0,
+      "reference": 88.7
+    },
+    "routing_lift_pct": {
+      "measured": 20.0,
+      "reference": 15.4
+    },
+    "retrieval_lift_pct": {
+      "measured": -14.29,
+      "reference": 12.9
+    },
+    "hallucination_rate_pct": {
+      "measured": 40.0,
+      "reference": 2.8
+    },
+    "pdb_success_rate_pct": {
+      "measured": 100.0,
+      "reference": 98.3
+    },
+    "meta": {
+      "description": "小范围对比测试参考值（简历/论文记录）。run_benchmarks 仅作对照，非自动断言。",
+      "participants_approx": "70-80",
+      "cohorts": [
+        "实验室同学",
+        "导师",
+        "学院开放日活动访客"
+      ],
+      "comparison": "端到端大模型 vs Agent+RAG 智能体"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{"query": "今天天气怎么样", "expect_route": "reject", "forbid_in_answer": []}
+{"query": "比特币明天涨还是跌", "expect_route": "reject", "forbid_in_answer": []}
+{"query": "什么是纳米抗体", "expect_route": "kb", "require_citation": true, "needle_in_context": "纳米抗体"}
+{"query": "纳米抗体与单克隆抗体的区别", "expect_route": "kb", "require_citation": true, "needle_in_context": "抗体"}
+{"query": "图神经网络 结合位点", "expect_route": "kb", "require_citation": true, "needle_in_context": "图神经"}

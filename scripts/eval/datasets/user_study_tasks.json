@@ -1,0 +1,60 @@
+{
+  "study_id": "nanobody_agent_pilot_2025",
+  "description": "baseline_e2e（仅端到端大模型） vs agent_rag（本系统）",
+  "roles": [
+    "lab_student",
+    "advisor",
+    "teacher",
+    "open_day_visitor"
+  ],
+  "tasks": [
+    {
+      "id": "T1_definition",
+      "title": "概念定义",
+      "instruction": "提问「什么是纳米抗体」，评估准确性与文献可追溯性。",
+      "suggested_duration_min": 3
+    },
+    {
+      "id": "T2_comparison",
+      "title": "对比分析",
+      "instruction": "提问纳米抗体与单克隆抗体区别，记录是否胡编、是否有引用。",
+      "suggested_duration_min": 5
+    },
+    {
+      "id": "T3_literature",
+      "title": "文献可追溯",
+      "instruction": "提问图神经网络与结合位点预测，检查来源是否可核对（导师关注）。",
+      "suggested_duration_min": 5
+    },
+    {
+      "id": "T4_prediction",
+      "title": "结构/位点",
+      "instruction": "上传 PDB 或粘贴序列，请求结合位点预测或 PyMOL 可视化。",
+      "suggested_duration_min": 8
+    },
+    {
+      "id": "T5_off_domain",
+      "title": "域外拒答",
+      "instruction": "提问与纳米抗体无关的问题，系统应拒答。",
+      "suggested_duration_min": 2
+    }
+  ],
+  "subjective_questions": [
+    {
+      "id": "Q_traceability",
+      "text": "回答是否有可追溯的文献/知识来源（1-5）"
+    },
+    {
+      "id": "Q_time_saved",
+      "text": "是否节省了你的时间（1-5，实验室同学）"
+    },
+    {
+      "id": "Q_clarity",
+      "text": "是否让你清楚自己在做什么（1-5，非技术同学）"
+    },
+    {
+      "id": "Q_rigor",
+      "text": "学术严谨性（1-5，导师）"
+    }
+  ]
+}
