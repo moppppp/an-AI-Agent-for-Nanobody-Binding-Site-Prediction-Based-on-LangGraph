@@ -245,10 +245,17 @@ def pdf_ocr_to_markdown(
     min_chars: int = 20,
 ) -> str:
     import fitz
+    from datetime import datetime
 
+    try:
+        mtime = int(pdf_path.stat().st_mtime)
+        pub_year = str(datetime.fromtimestamp(mtime).year)
+    except OSError:
+        mtime, pub_year = 0, ""
     lines = [
         f"# {pdf_path.stem}",
         "",
+        f"<!-- kb-meta: source={pdf_path.name} year={pub_year} version={mtime} -->",
         f"<!-- source: {pdf_path.name} (OCR dpi={dpi} lang={lang}) -->",
         "",
     ]

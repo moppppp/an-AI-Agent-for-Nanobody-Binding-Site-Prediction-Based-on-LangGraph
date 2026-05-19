@@ -585,8 +585,22 @@ def pdf_to_markdown(
     caption_context_before: int = 2,
 ) -> str:
     import fitz
+    from datetime import datetime
 
-    lines = [f"# {pdf_path.stem}", "", f"<!-- source: {pdf_path.name} -->", ""]
+    year_m = re.search(r"(20\d{2})", pdf_path.stem)
+    try:
+        mtime = int(pdf_path.stat().st_mtime)
+        pub_year = year_m.group(1) if year_m else str(datetime.fromtimestamp(mtime).year)
+    except OSError:
+        mtime = 0
+        pub_year = year_m.group(1) if year_m else ""
+    lines = [
+        f"# {pdf_path.stem}",
+        "",
+        f"<!-- kb-meta: source={pdf_path.name} year={pub_year} version={mtime} -->",
+        f"<!-- source: {pdf_path.name} -->",
+        "",
+    ]
     total = 0
     with fitz.open(pdf_path) as doc:
         for i, page in enumerate(doc):

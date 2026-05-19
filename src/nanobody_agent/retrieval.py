@@ -9,6 +9,7 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 
 from nanobody_agent.config import Settings
+from nanobody_agent.kb_enrichment import KnowledgeEnrichment, KnowledgeChunk
 from nanobody_agent.llm_utils import classify_intent_rules
 from nanobody_agent.semantic_verify import SemanticVerifier
 from nanobody_agent.sequence_embed import embed_sequence, is_sequence_query
@@ -88,12 +89,15 @@ def _minmax_norm(scores: np.ndarray) -> np.ndarray:
 class HybridRetriever:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
+        self._chunks: list[KnowledgeChunk] = []
         self._docs: list[str] = []
         self._bm25: BM25Okapi | None = None
         self._index: faiss.Index | None = None
         self._model: SentenceTransformer | None = None
         self._verifier = SemanticVerifier(settings)
+        self._enrichment = KnowledgeEnrichment(settings)
         self._seq_doc_emb: np.ndarray | None = None
+        self._last_query_enrichment: dict = {}
 
     def _collect_corpus_paths(self) -> list[Path]:
         root = self.settings.knowledge_dir
@@ -116,26 +120,13 @@ class HybridRetriever:
         if paths and not self.settings.knowledge_include_ocr:
             print("[nanobody] 已跳过 ingested_ocr/（设 KNOWLEDGE_INCLUDE_OCR=true 可纳入）", flush=True)
 
-        chunks: list[str] = []
-        max_chunks = int(self.settings.knowledge_max_chunks or 0)
-        for p in paths:
-            try:
-                text = _read_text_file(p)
-            except OSError:
-                continue
-            if text is None or not text.strip():
-                continue
-            for para in re.split(r"\n{2,}", text):
-                para = para.strip()
-                if len(para) >= 20:
-                    chunks.append(para)
-                    if max_chunks > 0 and len(chunks) >= max_chunks:
-                        break
-            if max_chunks > 0 and len(chunks) >= max_chunks:
-                break
-
-        self._docs = chunks
-        print(f"[nanobody] 文本片段: {len(self._docs)} 条", flush=True)
+        self._chunks = self._enrichment.load_chunks(paths)
+        self._docs = [c.aligned_text for c in self._chunks]
+        print(
+            f"[nanobody] 文本片段: {len(self._docs)} 条 "
+            f"(实体对齐/时效元数据已解析)",
+            flush=True,
+        )
         if not self._docs:
             self._bm25 = None
             self._index = None
@@ -185,8 +176,14 @@ class HybridRetriever:
         if vecs:
             self._seq_doc_emb = np.stack(vecs, axis=0)
 
+    def _prepare_query(self, query: str) -> str:
+        q, meta = self._enrichment.prepare_query(query)
+        self._last_query_enrichment = meta
+        return q
+
     def score_breakdown(self, query: str) -> dict[str, float]:
         """Hybrid routing scores; routing_score is used for KB vs LLM gate."""
+        query = self._prepare_query(query)
         if not query.strip() or not self._docs or self._bm25 is None or self._index is None or self._model is None:
             return {
                 "dense_top": 0.0,
@@ -235,6 +232,7 @@ class HybridRetriever:
             "hybrid": hybrid,
             "overlap_boost": overlap_boost,
             "routing_score": routing_score,
+            "query_enrichment": dict(self._last_query_enrichment),
         }
 
     def max_relevance(self, query: str) -> float:
@@ -336,6 +334,7 @@ class HybridRetriever:
         if not self._docs or self._bm25 is None or self._index is None or self._model is None:
             return []
 
+        query = self._prepare_query(query)
         q_tokens = _tokenize(query)
         bm25_scores = np.array(self._bm25.get_scores(q_tokens), dtype=np.float64)
         bm25_n = _minmax_norm(bm25_scores)
@@ -357,6 +356,18 @@ class HybridRetriever:
         w = float(self.settings.hybrid_dense_weight)
         hybrid = w * dense_n + (1.0 - w) * bm25_n
 
+        for i, ch in enumerate(self._chunks):
+            hybrid[i] *= self._enrichment.temporal_weight(ch.year)
+
+        if self.settings.fact_drift_enabled and self._chunks:
+            hybrid_list = hybrid.tolist()
+            hybrid_list, drift_events = self._enrichment.apply_fact_drift(
+                hybrid_list, self._chunks
+            )
+            hybrid = np.array(hybrid_list, dtype=np.float64)
+            if drift_events:
+                self._last_query_enrichment["fact_drift"] = drift_events[:5]
+
         if is_sequence_query(query) and self._seq_doc_emb is not None:
             from nanobody_agent.sequence_embed import extract_sequence
 
@@ -374,7 +385,17 @@ class HybridRetriever:
         for rank, i in enumerate(order):
             i = int(i)
             score = float(hybrid[i])
-            out.append({"rank": rank + 1, "score": score, "text": self._docs[i]})
+            ch = self._chunks[i]
+            out.append(
+                {
+                    "rank": rank + 1,
+                    "score": score,
+                    "text": ch.text,
+                    "source": ch.source,
+                    "year": ch.year,
+                    "temporal_weight": self._enrichment.temporal_weight(ch.year),
+                }
+            )
         return out
 
     def retrieve_extended(self, query: str, top_k: int | None = None) -> list[dict]:

@@ -89,6 +89,14 @@ class Settings(BaseSettings):
     kb_reject_threshold: float = 0.38
     kb_extended_retrieval_top_k: int = 8
 
+    # 知识增强：实体对齐、定性词扩展、时效衰减、事实漂移
+    entity_align_enabled: bool = True
+    qualitative_expand_enabled: bool = True
+    temporal_decay_enabled: bool = True
+    temporal_half_life_years: float = 5.0
+    fact_drift_enabled: bool = True
+    fact_drift_penalty: float = 0.12
+
     # 序列检索：安装 antiberty 后自动启用，否则氨基酸组成回退
     antiberty_enabled: bool = True
     sequence_dense_boost: float = 0.12

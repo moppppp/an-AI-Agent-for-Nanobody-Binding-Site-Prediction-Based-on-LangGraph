@@ -13,13 +13,21 @@ def build_citation_snippets(hits: list[dict]) -> list[dict[str, Any]]:
         text = (h.get("text") or "").strip()
         if not text:
             continue
+        preview = text[:280] + ("…" if len(text) > 280 else "")
+        src = h.get("source")
+        year = h.get("year")
+        if src or year:
+            tag = f" [{src or ''}{', ' + str(year) if year else ''}]".strip()
+            preview = (tag.strip() + " " + preview).strip()
         out.append(
             {
                 "id": i,
                 "rank": h.get("rank", i),
                 "score": float(h.get("score") or 0.0),
                 "text": text,
-                "preview": text[:280] + ("…" if len(text) > 280 else ""),
+                "preview": preview,
+                "source": src,
+                "year": year,
             }
         )
     return out
