@@ -50,3 +50,17 @@ PDF → `knowledge_base/pdfs/` → `python ingest_pdfs.py`
 ## NanoKGAT
 
 默认 `NANOKGAT_USE_STUB=true`（Stub 演示）。真实 GNN：`NANOKGAT_USE_STUB=false` + `NANOKGAT_PYTHON_MODULE`，见 `src/nanobody_agent/nanokgat_adapter.py`。
+
+## 领域工具层
+
+噬菌体展示库 SQL、LIMS（SPR/ELISA）、本地 PDB 结构库、Rosetta/FoldX/AlphaFold 作业（`JOB_SCHEDULER=stub|slurm|k8s`）。配置见 `env.example` 中 `TOOLS_*` 项。
+
+```powershell
+python main.py "查询噬菌体展示库 PD-L1 KD 小于 20nM"
+python main.py "NB-001 SPR 动力学"
+python main.py "PDB 1ABC 链 A 与链 B 残基接触"
+python main.py "FoldX 突变扫描 ddG RMSD"
+python scripts/verify_domain_tools.py
+```
+
+审计日志：`outputs/tool_audit/tool_calls.jsonl`

@@ -14,6 +14,22 @@ _VIZ_KEYWORDS = ("pymol", "可视化", "结构可视化", "三维结构", "3d结
 _PREDICTION_KEYWORDS = ("预测", "结合位点", "表位", "binding", "nanokgat", "候选残基", "打分")
 _COMPARISON_KEYWORDS = ("对比", "比较", "区别", "vs", "versus")
 _DEFINITION_KEYWORDS = ("什么是", "是什么", "定义", "介绍", "概念")
+_DOMAIN_TOOLS_KEYWORDS = (
+    "噬菌体",
+    "展示库",
+    "LIMS",
+    "SPR",
+    "ELISA",
+    "FoldX",
+    "Rosetta",
+    "AlphaFold",
+    "突变扫描",
+    "亲和力成熟",
+    "ddG",
+    "RMSD",
+    "结构库",
+    "SLURM",
+)
 
 
 def classify_intent_rules(user_query: str) -> Intent | None:
@@ -30,6 +46,10 @@ def classify_intent_rules(user_query: str) -> Intent | None:
         return "visualization"
     if has_pred:
         return "prediction"
+    if any(k in q for k in _DOMAIN_TOOLS_KEYWORDS) or any(
+        k in lower for k in ("foldx", "rosetta", "alphafold", "slurm")
+    ):
+        return "domain_tools"
     if any(k in q for k in _COMPARISON_KEYWORDS):
         return "comparison"
     if any(k in q for k in _DEFINITION_KEYWORDS):

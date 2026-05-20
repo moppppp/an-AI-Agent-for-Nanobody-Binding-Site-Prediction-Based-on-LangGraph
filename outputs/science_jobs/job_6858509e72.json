@@ -1,0 +1,15 @@
+{
+  "job_id": "job_6858509e72",
+  "engine": "foldx",
+  "scheduler": "stub",
+  "pdb_path": null,
+  "mutations": [],
+  "status": "completed",
+  "submitted_at": 1779265092.3101194,
+  "completed_at": 1779265092.3190632,
+  "metrics": {
+    "ddG_kcal_mol": -2.1,
+    "RMSD_A": 1.05,
+    "interface_energy": -8.5
+  }
+}

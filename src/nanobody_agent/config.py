@@ -109,6 +109,17 @@ class Settings(BaseSettings):
     upload_max_bytes: int = 10_485_760
     uploads_dir: Path = _project_root() / "uploads"
 
+    # 领域工具层（噬菌体库 / LIMS / PDB 库 / 科学计算作业）
+    tools_enabled: bool = True
+    tools_allow_outbound: bool = False
+    tool_audit_dir: Path = _project_root() / "outputs" / "tool_audit"
+    phage_db_url: str = ""  # e.g. sqlite:///path/to/phage.db
+    lims_api_base: str = ""  # internal LIMS base URL (outbound gated)
+    pdb_library_dir: Path = _project_root() / "knowledge_base" / "pdb_library"
+    science_jobs_dir: Path = _project_root() / "outputs" / "science_jobs"
+    job_scheduler: str = "stub"  # stub | slurm | k8s
+    tool_actor_role: str = "scientist"
+
 
 def _apply_llm_provider(settings: Settings) -> Settings:
     provider = (settings.llm_provider or "deepseek").strip().lower()

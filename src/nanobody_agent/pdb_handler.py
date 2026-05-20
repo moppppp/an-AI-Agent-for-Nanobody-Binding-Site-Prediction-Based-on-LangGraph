@@ -40,7 +40,9 @@ def parse_pdb_file(path: Path, chain: str | None = None) -> dict:
     seen: dict[tuple[str, int, str], str] = {}
     atom_count = 0
 
-    for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+    from nanobody_agent.tools.io_utils import read_text_auto
+
+    for line in read_text_auto(path).splitlines():
         if not line.startswith("ATOM"):
             continue
         atom_count += 1

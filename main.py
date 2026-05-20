@@ -112,6 +112,15 @@ def main() -> None:
                 print(f"  [{i}] {preview}{'...' if len(s) > 160 else ''}")
         if out.get("pymol_link"):
             print("pymol_link:", out.get("pymol_link"))
+        for tr in out.get("tool_results") or []:
+            print(
+                "  tool:",
+                tr.get("tool"),
+                "audit:",
+                tr.get("audit_id"),
+                "ok:",
+                tr.get("success"),
+            )
         print("--- 回答 ---")
         print(out.get("final_answer") or "")
 

@@ -13,6 +13,7 @@ from nanobody_agent.nodes import (
     llm_router,
     nanokgat_predict,
     reject_low_relevance,
+    run_domain_tools,
     retrieve_knowledge,
     route_after_classify_factory,
     route_after_llm_router,
@@ -34,6 +35,7 @@ def build_app():
     g.add_node("llm_router", partial(llm_router, deps=deps))
     g.add_node("direct_llm_answer", partial(direct_llm_answer, deps=deps))
     g.add_node("nanokgat_predict", partial(nanokgat_predict, deps=deps))
+    g.add_node("run_domain_tools", partial(run_domain_tools, deps=deps))
     g.add_node("reject_low_relevance", partial(reject_low_relevance, deps=deps))
 
     g.add_edge(START, "classify_router")
@@ -56,10 +58,12 @@ def build_app():
             "direct": "direct_llm_answer",
             "pred": "nanokgat_predict",
             "viz": "nanokgat_predict",
+            "tools": "run_domain_tools",
         },
     )
     g.add_edge("direct_llm_answer", END)
     g.add_edge("nanokgat_predict", END)
+    g.add_edge("run_domain_tools", END)
     g.add_edge("reject_low_relevance", END)
 
     return g.compile()

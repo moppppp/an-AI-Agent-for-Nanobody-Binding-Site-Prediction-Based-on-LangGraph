@@ -133,6 +133,7 @@ def _state_to_response(
         "prediction": payload if payload else None,
         "pymol_link": out.get("pymol_link") or None,
         "reject_reason": out.get("reject_reason"),
+        "tool_results": out.get("tool_results") or [],
     }
 
 
@@ -197,6 +198,7 @@ class ChatResponse(BaseModel):
     prediction: dict | None = None
     reject_reason: str | None = None
     pymol_link: str | None = None
+    tool_results: list[dict] = Field(default_factory=list)
     cache_hit: bool = False
     repeat_count: int = 0
     repeat_total: int = 0

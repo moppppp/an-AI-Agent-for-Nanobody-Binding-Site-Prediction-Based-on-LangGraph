@@ -6,6 +6,8 @@
     nanokgat_predict: "结合位点预测",
     nanokgat_predict_visualization: "预测 + 可视化",
     repeat_query_cache: "重复问题缓存",
+    domain_tools: "领域工具",
+    domain_tools_disabled: "领域工具（未启用）",
   };
 
   const INTENT_LABELS = {
@@ -13,6 +15,7 @@
     comparison: "对比",
     prediction: "预测",
     visualization: "可视化",
+    domain_tools: "领域数据/计算",
     unknown: "未知",
   };
 
@@ -520,6 +523,18 @@
       });
     } else {
       snippetBlock.classList.add("hidden");
+    }
+
+    var toolBlock = document.getElementById("toolBlock");
+    if (data.tool_results && data.tool_results.length) {
+      toolBlock.classList.remove("hidden");
+      document.getElementById("toolResultsJson").textContent = JSON.stringify(
+        data.tool_results,
+        null,
+        2
+      );
+    } else {
+      toolBlock.classList.add("hidden");
     }
 
     var predBlock = document.getElementById("predictionBlock");

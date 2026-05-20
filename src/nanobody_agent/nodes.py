@@ -19,6 +19,7 @@ from nanobody_agent.llm_utils import (
 )
 from nanobody_agent.nanokgat_adapter import build_pymol_link, run_nanokgat
 from nanobody_agent.retrieval import HybridRetriever
+from nanobody_agent.tools.executor import ToolExecutor, format_tool_answer
 from nanobody_agent.sequence_embed import extract_sequence
 from nanobody_agent.state import AgentState, Intent
 
@@ -196,8 +197,34 @@ def nanokgat_predict(state: AgentState, deps: GraphDeps) -> dict:
     return out
 
 
+def run_domain_tools(state: AgentState, deps: GraphDeps) -> dict:
+    q = state.get("user_query") or ""
+    if not deps.settings.tools_enabled:
+        text = "领域工具层未启用（TOOLS_ENABLED=false）。"
+        return {
+            "final_answer": text,
+            "messages": [to_ai_message(text)],
+            "route_name": "domain_tools_disabled",
+        }
+    executor = ToolExecutor(deps.settings, role=deps.settings.tool_actor_role)
+    results = executor.invoke_all(
+        q,
+        actor="nanobody_agent",
+        pdb_path=state.get("pdb_path"),
+    )
+    text = format_tool_answer(results)
+    return {
+        "tool_results": results,
+        "final_answer": text,
+        "messages": [to_ai_message(text)],
+        "route_name": "domain_tools",
+    }
+
+
 def route_after_llm_router(state: AgentState) -> str:
     intent = state.get("intent") or "unknown"
+    if intent == "domain_tools":
+        return "tools"
     if intent in ("definition", "comparison", "unknown"):
         return "direct"
     if intent == "visualization":
@@ -209,7 +236,7 @@ def route_after_classify_factory(threshold: float):
     def _route(state: AgentState) -> str:
         q = state.get("user_query") or ""
         rule = classify_intent_rules(q) or state.get("intent")
-        if rule in ("prediction", "visualization"):
+        if rule in ("prediction", "visualization", "domain_tools"):
             return "llm"
         if state.get("reject"):
             return "reject"

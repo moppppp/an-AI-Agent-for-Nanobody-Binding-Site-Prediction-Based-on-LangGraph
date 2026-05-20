@@ -3,7 +3,14 @@ from typing import Annotated, Literal, TypedDict
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 
-Intent = Literal["definition", "comparison", "prediction", "visualization", "unknown"]
+Intent = Literal[
+    "definition",
+    "comparison",
+    "prediction",
+    "visualization",
+    "domain_tools",
+    "unknown",
+]
 
 
 class AgentState(TypedDict, total=False):
@@ -34,3 +41,4 @@ class AgentState(TypedDict, total=False):
     final_answer: str
     prediction_payload: dict
     pymol_link: str
+    tool_results: list[dict]
